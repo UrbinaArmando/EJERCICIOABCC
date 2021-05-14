@@ -1,0 +1,379 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="abcModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ABCC">
+          <Key>
+            <PropertyRef Name="Sku" />
+          </Key>
+          <Property Name="Sku" Type="int" Nullable="false" />
+          <Property Name="Articulo" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="Marca" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="Modelo" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Departamento" Type="int" Nullable="false" />
+          <Property Name="Clase" Type="int" Nullable="false" />
+          <Property Name="Familia" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="Fecha_Alta" Type="date" Nullable="false" />
+          <Property Name="Stock" Type="int" Nullable="false" />
+          <Property Name="Cantidad" Type="int" Nullable="false" />
+          <Property Name="Descontinuado" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="Fecha_Baja" Type="date" />
+        </EntityType>
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'abc.dbo.Clase' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="Clase">
+          <Key>
+            <PropertyRef Name="IdClase" />
+            <PropertyRef Name="NombreClase" />
+            <PropertyRef Name="IdDepartamento" />
+          </Key>
+          <Property Name="IdClase" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="NombreClase" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="IdDepartamento" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Departamento">
+          <Key>
+            <PropertyRef Name="IdDepartamento" />
+          </Key>
+          <Property Name="IdDepartamento" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="NombreDepartamento" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'abc.dbo.Familia' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="Familia">
+          <Key>
+            <PropertyRef Name="IdFamilia" />
+            <PropertyRef Name="NombreFamilia" />
+            <PropertyRef Name="IdClase" />
+            <PropertyRef Name="IdDepartamento" />
+          </Key>
+          <Property Name="IdFamilia" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="NombreFamilia" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="IdClase" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="IdDepartamento" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_IdDepartamento_Clase">
+          <End Role="Departamento" Type="Self.Departamento" Multiplicity="1" />
+          <End Role="Clase" Type="Self.Clase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departamento">
+              <PropertyRef Name="IdDepartamento" />
+            </Principal>
+            <Dependent Role="Clase">
+              <PropertyRef Name="IdDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_IdDepartamento_Familia">
+          <End Role="Departamento" Type="Self.Departamento" Multiplicity="1" />
+          <End Role="Familia" Type="Self.Familia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departamento">
+              <PropertyRef Name="IdDepartamento" />
+            </Principal>
+            <Dependent Role="Familia">
+              <PropertyRef Name="IdDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="spAlta" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Sku" Type="int" Mode="In" />
+          <Parameter Name="Articulo" Type="varchar" Mode="In" />
+          <Parameter Name="Marca" Type="varchar" Mode="In" />
+          <Parameter Name="Modelo" Type="varchar" Mode="In" />
+          <Parameter Name="Departamento" Type="int" Mode="In" />
+          <Parameter Name="Clase" Type="int" Mode="In" />
+          <Parameter Name="Familia" Type="varchar" Mode="In" />
+          <Parameter Name="Stock" Type="int" Mode="In" />
+          <Parameter Name="Cantidad" Type="int" Mode="In" />
+          <Parameter Name="Fecha_Alta" Type="date" Mode="In" />
+          <Parameter Name="Fecha_Baja" Type="date" Mode="In" />
+          <Parameter Name="Descontinuado" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="spBaja" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Sku" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spCambio" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Sku" Type="int" Mode="In" />
+          <Parameter Name="Articulo" Type="varchar" Mode="In" />
+          <Parameter Name="Marca" Type="varchar" Mode="In" />
+          <Parameter Name="Modelo" Type="varchar" Mode="In" />
+          <Parameter Name="Departamento" Type="int" Mode="In" />
+          <Parameter Name="Clase" Type="int" Mode="In" />
+          <Parameter Name="Familia" Type="varchar" Mode="In" />
+          <Parameter Name="Stock" Type="int" Mode="In" />
+          <Parameter Name="Cantidad" Type="int" Mode="In" />
+          <Parameter Name="Fecha_Alta" Type="date" Mode="In" />
+          <Parameter Name="Fecha_Baja" Type="date" Mode="In" />
+          <Parameter Name="Descontinuado" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="spConsulta" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Sku" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="abcModelStoreContainer">
+          <EntitySet Name="ABCC" EntityType="Self.ABCC" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Departamento" EntityType="Self.Departamento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Clase" EntityType="Self.Clase" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Clase].[IdClase] AS [IdClase], 
+    [Clase].[NombreClase] AS [NombreClase], 
+    [Clase].[IdDepartamento] AS [IdDepartamento]
+    FROM [dbo].[Clase] AS [Clase]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Familia" EntityType="Self.Familia" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Familia].[IdFamilia] AS [IdFamilia], 
+    [Familia].[NombreFamilia] AS [NombreFamilia], 
+    [Familia].[IdClase] AS [IdClase], 
+    [Familia].[IdDepartamento] AS [IdDepartamento]
+    FROM [dbo].[Familia] AS [Familia]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="fk_IdDepartamento_Clase" Association="Self.fk_IdDepartamento_Clase">
+            <End Role="Departamento" EntitySet="Departamento" />
+            <End Role="Clase" EntitySet="Clase" />
+          </AssociationSet>
+          <AssociationSet Name="fk_IdDepartamento_Familia" Association="Self.fk_IdDepartamento_Familia">
+            <End Role="Departamento" EntitySet="Departamento" />
+            <End Role="Familia" EntitySet="Familia" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="abcModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ABCC">
+          <Key>
+            <PropertyRef Name="Sku" />
+          </Key>
+          <Property Name="Sku" Type="Int32" Nullable="false" />
+          <Property Name="Articulo" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Marca" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Modelo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Departamento" Type="Int32" Nullable="false" />
+          <Property Name="Clase" Type="Int32" Nullable="false" />
+          <Property Name="Familia" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Fecha_Alta" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Stock" Type="Int32" Nullable="false" />
+          <Property Name="Cantidad" Type="Int32" Nullable="false" />
+          <Property Name="Descontinuado" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Fecha_Baja" Type="DateTime" Precision="0" />
+        </EntityType>
+        <EntityType Name="Departamento">
+          <Key>
+            <PropertyRef Name="IdDepartamento" />
+          </Key>
+          <Property Name="IdDepartamento" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="NombreDepartamento" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Clase" Relationship="Self.fk_IdDepartamento_Clase" FromRole="Departamento" ToRole="Clase" />
+          <NavigationProperty Name="Familia" Relationship="Self.fk_IdDepartamento_Familia" FromRole="Departamento" ToRole="Familia" />
+        </EntityType>
+        <EntityType Name="Clase">
+          <Key>
+            <PropertyRef Name="IdClase" />
+            <PropertyRef Name="NombreClase" />
+            <PropertyRef Name="IdDepartamento" />
+          </Key>
+          <Property Name="IdClase" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="NombreClase" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IdDepartamento" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <NavigationProperty Name="Departamento" Relationship="Self.fk_IdDepartamento_Clase" FromRole="Clase" ToRole="Departamento" />
+        </EntityType>
+        <EntityType Name="Familia">
+          <Key>
+            <PropertyRef Name="IdFamilia" />
+            <PropertyRef Name="NombreFamilia" />
+            <PropertyRef Name="IdClase" />
+            <PropertyRef Name="IdDepartamento" />
+          </Key>
+          <Property Name="IdFamilia" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NombreFamilia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IdClase" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="IdDepartamento" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <NavigationProperty Name="Departamento" Relationship="Self.fk_IdDepartamento_Familia" FromRole="Familia" ToRole="Departamento" />
+        </EntityType>
+        <Association Name="fk_IdDepartamento_Clase">
+          <End Role="Departamento" Type="Self.Departamento" Multiplicity="1" />
+          <End Role="Clase" Type="Self.Clase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departamento">
+              <PropertyRef Name="IdDepartamento" />
+            </Principal>
+            <Dependent Role="Clase">
+              <PropertyRef Name="IdDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_IdDepartamento_Familia">
+          <End Role="Departamento" Type="Self.Departamento" Multiplicity="1" />
+          <End Role="Familia" Type="Self.Familia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Departamento">
+              <PropertyRef Name="IdDepartamento" />
+            </Principal>
+            <Dependent Role="Familia">
+              <PropertyRef Name="IdDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="abcEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ABCC" EntityType="Self.ABCC" />
+          <EntitySet Name="Departamento" EntityType="Self.Departamento" />
+          <EntitySet Name="Clase" EntityType="Self.Clase" />
+          <EntitySet Name="Familia" EntityType="Self.Familia" />
+          <AssociationSet Name="fk_IdDepartamento_Clase" Association="Self.fk_IdDepartamento_Clase">
+            <End Role="Departamento" EntitySet="Departamento" />
+            <End Role="Clase" EntitySet="Clase" />
+          </AssociationSet>
+          <AssociationSet Name="fk_IdDepartamento_Familia" Association="Self.fk_IdDepartamento_Familia">
+            <End Role="Departamento" EntitySet="Departamento" />
+            <End Role="Familia" EntitySet="Familia" />
+          </AssociationSet>
+          <FunctionImport Name="spAlta">
+            <Parameter Name="Sku" Mode="In" Type="Int32" />
+            <Parameter Name="Articulo" Mode="In" Type="String" />
+            <Parameter Name="Marca" Mode="In" Type="String" />
+            <Parameter Name="Modelo" Mode="In" Type="String" />
+            <Parameter Name="Departamento" Mode="In" Type="Int32" />
+            <Parameter Name="Clase" Mode="In" Type="Int32" />
+            <Parameter Name="Familia" Mode="In" Type="String" />
+            <Parameter Name="Stock" Mode="In" Type="Int32" />
+            <Parameter Name="Cantidad" Mode="In" Type="Int32" />
+            <Parameter Name="Fecha_Alta" Mode="In" Type="DateTime" />
+            <Parameter Name="Fecha_Baja" Mode="In" Type="DateTime" />
+            <Parameter Name="Descontinuado" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="spBaja">
+            <Parameter Name="Sku" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spCambio">
+            <Parameter Name="Sku" Mode="In" Type="Int32" />
+            <Parameter Name="Articulo" Mode="In" Type="String" />
+            <Parameter Name="Marca" Mode="In" Type="String" />
+            <Parameter Name="Modelo" Mode="In" Type="String" />
+            <Parameter Name="Departamento" Mode="In" Type="Int32" />
+            <Parameter Name="Clase" Mode="In" Type="Int32" />
+            <Parameter Name="Familia" Mode="In" Type="String" />
+            <Parameter Name="Stock" Mode="In" Type="Int32" />
+            <Parameter Name="Cantidad" Mode="In" Type="Int32" />
+            <Parameter Name="Fecha_Alta" Mode="In" Type="DateTime" />
+            <Parameter Name="Fecha_Baja" Mode="In" Type="DateTime" />
+            <Parameter Name="Descontinuado" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="spConsulta" ReturnType="Collection(abcModel.spConsulta_Result)">
+            <Parameter Name="Sku" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="spConsulta_Result">
+          <Property Type="Int32" Name="Sku" Nullable="false" />
+          <Property Type="String" Name="Articulo" Nullable="false" MaxLength="15" />
+          <Property Type="String" Name="Marca" Nullable="false" MaxLength="15" />
+          <Property Type="String" Name="Modelo" Nullable="false" MaxLength="20" />
+          <Property Type="Int32" Name="Departamento" Nullable="false" />
+          <Property Type="Int32" Name="Clase" Nullable="false" />
+          <Property Type="String" Name="Familia" Nullable="false" MaxLength="2" />
+          <Property Type="DateTime" Name="Fecha_Alta" Nullable="false" />
+          <Property Type="Int32" Name="Stock" Nullable="false" />
+          <Property Type="Int32" Name="Cantidad" Nullable="false" />
+          <Property Type="String" Name="Descontinuado" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="Fecha_Baja" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="abcModelStoreContainer" CdmEntityContainer="abcEntities">
+          <EntitySetMapping Name="ABCC">
+            <EntityTypeMapping TypeName="abcModel.ABCC">
+              <MappingFragment StoreEntitySet="ABCC">
+                <ScalarProperty Name="Sku" ColumnName="Sku" />
+                <ScalarProperty Name="Articulo" ColumnName="Articulo" />
+                <ScalarProperty Name="Marca" ColumnName="Marca" />
+                <ScalarProperty Name="Modelo" ColumnName="Modelo" />
+                <ScalarProperty Name="Departamento" ColumnName="Departamento" />
+                <ScalarProperty Name="Clase" ColumnName="Clase" />
+                <ScalarProperty Name="Familia" ColumnName="Familia" />
+                <ScalarProperty Name="Fecha_Alta" ColumnName="Fecha_Alta" />
+                <ScalarProperty Name="Stock" ColumnName="Stock" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="Descontinuado" ColumnName="Descontinuado" />
+                <ScalarProperty Name="Fecha_Baja" ColumnName="Fecha_Baja" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Departamento">
+            <EntityTypeMapping TypeName="abcModel.Departamento">
+              <MappingFragment StoreEntitySet="Departamento">
+                <ScalarProperty Name="IdDepartamento" ColumnName="IdDepartamento" />
+                <ScalarProperty Name="NombreDepartamento" ColumnName="NombreDepartamento" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Clase">
+            <EntityTypeMapping TypeName="abcModel.Clase">
+              <MappingFragment StoreEntitySet="Clase">
+                <ScalarProperty Name="IdClase" ColumnName="IdClase" />
+                <ScalarProperty Name="NombreClase" ColumnName="NombreClase" />
+                <ScalarProperty Name="IdDepartamento" ColumnName="IdDepartamento" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Familia">
+            <EntityTypeMapping TypeName="abcModel.Familia">
+              <MappingFragment StoreEntitySet="Familia">
+                <ScalarProperty Name="IdFamilia" ColumnName="IdFamilia" />
+                <ScalarProperty Name="NombreFamilia" ColumnName="NombreFamilia" />
+                <ScalarProperty Name="IdClase" ColumnName="IdClase" />
+                <ScalarProperty Name="IdDepartamento" ColumnName="IdDepartamento" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spAlta" FunctionName="abcModel.Store.spAlta" />
+          <FunctionImportMapping FunctionImportName="spBaja" FunctionName="abcModel.Store.spBaja" />
+          <FunctionImportMapping FunctionImportName="spCambio" FunctionName="abcModel.Store.spCambio" />
+          <FunctionImportMapping FunctionImportName="spConsulta" FunctionName="abcModel.Store.spConsulta">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="abcModel.spConsulta_Result">
+                <ScalarProperty Name="Sku" ColumnName="Sku" />
+                <ScalarProperty Name="Articulo" ColumnName="Articulo" />
+                <ScalarProperty Name="Marca" ColumnName="Marca" />
+                <ScalarProperty Name="Modelo" ColumnName="Modelo" />
+                <ScalarProperty Name="Departamento" ColumnName="Departamento" />
+                <ScalarProperty Name="Clase" ColumnName="Clase" />
+                <ScalarProperty Name="Familia" ColumnName="Familia" />
+                <ScalarProperty Name="Fecha_Alta" ColumnName="Fecha_Alta" />
+                <ScalarProperty Name="Stock" ColumnName="Stock" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="Descontinuado" ColumnName="Descontinuado" />
+                <ScalarProperty Name="Fecha_Baja" ColumnName="Fecha_Baja" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
